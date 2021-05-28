@@ -10,43 +10,36 @@
 #include <set>
 #include <vector>
 using namespace std;
-typedef long long lld;
-typedef long double lf;
-typedef unsigned long long uld;
-typedef pair<int, int> pii;
-#define fi first
-#define se second
-#define pb push_back
-#define mk make_pair
-#define FOR(i, a, b) for (int i = (a); i <= (b); ++i)
-#define ROF(i, a, b) for (int i = (a); i >= (b); --i)
 /******************heading******************/
-const int M = 5e4 + 5, P = 505;
+const int M = 5e4 + 5, P = 505;  //定义常数
 int I, m, p;
-inline int _(int d) { return (d + p) % p; }
+inline int _(int d) { return (d + p) % p; } //用于取模
 namespace DQ {       // 双栈模拟双端队列
-pii fr[M], bc[M];    // front,back; fi:w,se:v;
-int tf = 0, tb = 0;  // top
+pair<int,int> fr[M],bc[M]; //二元组，详见题目3.4
+int tf = 0, tb = 0;  // 一端的top,因为是双端队列所以有俩
 int ff[M][P], fb[M][P];
-void update(pii *s, int f[][P], int i) {  // update f[i] from f[i-1]
-  FOR(j, 0, p - 1) {
+void update(pair<int, int> *s, int f[][P], int i) {  // 用f[i-1]更新f[i]
+  for(int j=0;j<=(p-1);j++){
     f[i][j] = f[i - 1][j];
-    if (~f[i - 1][_(j - s[i].fi)])
-      f[i][j] = max(f[i][j], f[i - 1][_(j - s[i].fi)] + s[i].se);
+    if (~f[i - 1][_(j - s[i].first)]) //按位取反
+      f[i][j] = max(f[i][j], f[i - 1][_(j - s[i].first)] + s[i].second);
   }
 }
-void push_front(pii x) { fr[++tf] = x, update(fr, ff, tf); }
-void push_back(pii x) { bc[++tb] = x, update(bc, fb, tb); }
+//以下两行代码表示push入队列，很好理解
+void push_front(pair<int, int> x) { fr[++tf] = x, update(fr, ff, tf); }
+void push_back(pair<int, int> x) { bc[++tb] = x, update(bc, fb, tb); }
+//以下两行代码表示从队列pop出元素
 void pop_front() {
   if (tf) {
     --tf;
     return;
   }
   int mid = (tb + 1) / 2, top = tb;
-  ROF(i, mid, 1) push_front(bc[i]);
+  for(int i=mid;i>=1;i--) push_front(bc[i]);
   tb = 0;
-  FOR(i, mid + 1, top) push_back(bc[i]);
+  for(int i=(mid+1);i<=top;i++) push_back(bc[i]);
   --tf;
+  //上面的代码，逻辑和普通队列是一样的
 }
 void pop_back() {
   if (tb) {
@@ -54,22 +47,23 @@ void pop_back() {
     return;
   }
   int mid = (tf + 1) / 2, top = tf;
-  ROF(i, mid, 1) push_back(fr[i]);
+  for(int i=mid;i>=1;i--) push_back(fr[i]);
   tf = 0;
-  FOR(i, mid + 1, top) push_front(fr[i]);
+  for(int i=(mid+1);i<=top;i++) push_front(fr[i]);
   --tb;
+  //上面的代码，逻辑和普通队列是一样的
 }
-int q[M], ql, qr;
+int q[M], ql, qr;//题目任务5要求的
 int query(int l, int r) {
   const int *const f = ff[tf], *const g = fb[tb];
   int ans = -1;
   ql = 1, qr = 0;
-  FOR(i, l - p + 1, r - p + 1) {
+  for(int i=(l-p+1);i<=(r-p+1);i++){
     int x = g[_(i)];
     while (ql <= qr && g[q[qr]] <= x) --qr;
     q[++qr] = _(i);
   }
-  ROF(i, p - 1, 0) {
+  for(int i=(p-1);i>=0;i--){
     if (ql <= qr && ~f[i] && ~g[q[ql]]) ans = max(ans, f[i] + g[q[ql]]);
     // 删 l-i，加 r-i+1
     if (ql <= qr && _(l - i) == q[ql]) ++ql;
@@ -79,19 +73,19 @@ int query(int l, int r) {
   }
   return ans;
 }
-void init() { FOR(i, 1, P - 1) ff[0][i] = fb[0][i] = -1; }
+void init(){ for(int i=1;i<=(p-1);i++) ff[0][i]=fb[0][i]=-1;}//初始化
 }  // namespace DQ
 int main() {
   DQ::init();
   scanf("%d%d%d", &I, &m, &p);
-  FOR(i, 1, m) {
+  for(int i=1;i<=m;i++) {
     char op[5];
     int x, y;
     scanf("%s%d%d", op, &x, &y);
     if (op[0] == 'I' && op[1] == 'F')
-      DQ::push_front(mk(_(x), y));
+      DQ::push_front(make_pair(_(x), y));
     else if (op[0] == 'I' && op[1] == 'G')
-      DQ::push_back(mk(_(x), y));
+      DQ::push_back(make_pair(_(x), y));
     else if (op[0] == 'D' && op[1] == 'F')
       DQ::pop_front();
     else if (op[0] == 'D' && op[1] == 'G')
