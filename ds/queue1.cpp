@@ -73,7 +73,7 @@ int query(int l, int r) {
   }
   return ans;
 }
-void init(){ for(int i=1;i<=(p-1);i++) ff[0][i]=fb[0][i]=-1;}//初始化
+void init(){ for(int i=1;i<=(P-1);i++) ff[0][i]=fb[0][i]=-1;}//初始化
 }  // namespace DQ
 int main() {
   DQ::init();
