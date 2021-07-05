@@ -3,10 +3,10 @@ void insertion_sort(int* a, int n) {
   for (int i = 2; i <= n; ++i) {
     int key = a[i];
     int j = i - 1;
-    while (j > 0 && a[j] > key) {
+    while (j > 0 && a[j] > key) {//移动
       a[j + 1] = a[j];
       --j;
     }
-    a[j + 1] = key;
+    a[j + 1] = key;//把初始值拿回去
   }
 }
