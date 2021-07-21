@@ -11,7 +11,7 @@ int main() {
     f0 = f[0];
     f1 = f[1];
     fill(f1, f1 + (1 << m + 1), 0);
-    f1[0] = 1;
+    f1[0] = 1;//初始化
     for (int i = 0; i < n; ++i) {
       for (int j = 0; j < m; ++j) {
         bool bad;
@@ -19,21 +19,20 @@ int main() {
         bad ^= 1;
         swap(f0, f1);
         fill(f1, f1 + (1 << m + 1), 0);
-#define u f0[s]
-        for (int s = 0; s < 1 << m + 1; ++s)
-          if (u) {
+        for (int s = 0; s < 1 << m + 1; ++s)//具体的dp转移，上面都是初始化
+          if (f0[s]) {
             bool lt = s >> j & 1, up = s >> j + 1 & 1;
             if (bad) {
-              if (!lt && !up) f1[s] += u;
+              if (!lt && !up) f1[s] += f0[s];
             } else {
-              f1[s ^ 3 << j] += u;
-              if (lt != up) f1[s] += u;
+              f1[s ^ 3 << j] += f0[s];
+              if (lt != up) f1[s] += f0[s];
             }
           }
       }
       swap(f0, f1);
       fill(f1, f1 + (1 << m + 1), 0);
-      for (int s = 0; s < 1 << m; ++s) f1[s << 1] = u;
+      for (int s = 0; s < 1 << m; ++s) f1[s << 1] = f0[s];
     }
     printf("Case %d: There are %lld ways to eat the trees.\n", Case, f1[0]);
   }
