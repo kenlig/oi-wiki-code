@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define REP(i, n) for (int i = 0; i < n; ++i)
 template <class T>
 inline bool checkMax(T &a, const T b) {
   return a < b ? a = b, 1 : 0;
@@ -40,15 +39,14 @@ int encode() {
   int bn = 1;
   bb[0] = 0;
   for (int i = m; i >= 0; --i) {
-#define bi bb[b[i]]
-    if (!~bi) bi = bn++;
+    if (!~bb[b[i]]) bb[b[i]] = bn++;
     s <<= offset;
-    s |= bi;
+    s |= bb[b[i]];
   }
   return s;
 }
 void decode(int s) {
-  REP(i, m + 1) {
+  for(int i=0;i<m+1;i++){
     b[i] = s & mask;
     s >>= offset;
   }
@@ -61,22 +59,22 @@ void push(int c, int j, int dn, int rt) {
 void init() {
   cin >> n >> m;
   H0 = H[0], H1 = H[1];
-  REP(c, 3) H1[c].clear();
+  for(int c=0;c<3;c++) H1[c].clear();
   d = 0;
   H1[0].push(0);
   memset(A, 0, sizeof(A));
-  REP(i, n) REP(j, m) cin >> A[i][j];
+  for(int i=0;i<n;i++) for(int j=0;j<m;j++) cin >> A[i][j];
 }
 void solve() {
   ans = 0;
-  REP(i, n) {
-  REP(j, m) {
+  for(int i=0;i<n;i++) {
+  for(int j=0;j<m;j++) {
     checkMax(ans, A[i][j]);  // 需要单独处理一个格子的情况
     if (!A[i][j]) continue;  // 如果有障碍，则跳过，注意这时状态数组不需要滚动
     swap(H0, H1);
-    REP(c, 3)
+    for(int c=0;c<3;c++)
     H1[c].clear();  // c 表示生成和消失事件发生的总次数，最多不超过 2 次
-    REP(c, 3) REP(ii, H0[c].sz) {
+    for(int c=0;c<3;c++) for(int ii=0;ii<H0[c].sz;ii++){
       decode(H0[c].state[ii]);
       d = H0[c].key[ii] + A[i][j];
       int lt = b[j], up = b[j + 1];
@@ -85,7 +83,7 @@ void solve() {
         if (lt == up) {  // 在一条路径问题中，我们不能合并相同的插头。
           // Cannot deploy here...
         } else {  // 有可能参与合并的两者中有独立插头，但是也可以用同样的代码片段处理
-          REP(i, m + 1) if (b[i] == lt) b[i] = up;
+          for(int i=0;i<m+1;i++) if (b[i] == lt) b[i] = up;
           push(c, j, 0, 0);
         }
       } else if (lt || up) {
@@ -119,15 +117,12 @@ void solve() {
       }
     }
   }
-  REP(c, 3) H1[c].roll();  // 一行结束，调整轮廓线
+  for(int c=0;c<3;c++) H1[c].roll();  // 一行结束，调整轮廓线
 }
-  REP(ii, H1[2].sz) checkMax(ans, H1[2].key[ii]);
+  for(int ii=0;ii<H1[2].sz;ii++)checkMax(ans, H1[2].key[ii]);
   cout << ans << endl;
 }
 int main() {
-#ifndef ONLINE_JUDGE
-  freopen("in.txt", "r", stdin);
-#endif
   int T;
   cin >> T;
   while (T--) {
