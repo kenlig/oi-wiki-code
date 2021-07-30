@@ -8,7 +8,7 @@ int d[MAXN][3];
 int x[MAXN], y[MAXN], z[MAXN];
 int babylon_sub(int c, int rot, int n) {
   if (d[c][rot] != -1) {
-    return d[c][rot];
+    return d[c][rot];1
   }
   d[c][rot] = 0;
   int base1, base2;
