@@ -2,11 +2,6 @@
 
 using namespace std;
 
-#define REP(i, a, b) for (int i = (a), _end_ = (b); i <= _end_; ++i)
-#define mem(a) memset((a), 0, sizeof(a))
-#define str(a) strlen(a)
-#define lson root << 1
-#define rson root << 1 | 1
 typedef long long LL;
 
 const int maxn = 500010;
@@ -24,13 +19,13 @@ struct matrix {
   matrix operator*(const matrix &b) const  // 重载矩阵乘
   {
     matrix c;
-    REP(i, 0, 1)
-    REP(j, 0, 1) REP(k, 0, 1) c.g[i][j] = max(c.g[i][j], g[i][k] + b.g[k][j]);
+    for(int i=0;i<=1;i++)
+    for(int j=0;j<=1;j++) for(int k=0;k<=1;k++) c.g[i][j] = max(c.g[i][j], g[i][k] + b.g[k][j]);
     return c;
   }
 } Tree[maxn], g[maxn];  // Tree[]是建出来的线段树，g[]是维护的每个点的矩阵
 
-inline void PushUp(int root) { Tree[root] = Tree[lson] * Tree[rson]; }
+inline void PushUp(int root) { Tree[root] = Tree[root<<1] * Tree[root << 1 | 1]; }
 
 inline void Build(int root, int l, int r) {
   if (l == r) {
@@ -38,17 +33,17 @@ inline void Build(int root, int l, int r) {
     return;
   }
   int Mid = l + r >> 1;
-  Build(lson, l, Mid);
-  Build(rson, Mid + 1, r);
+  Build(root<<1, l, Mid);
+  Build(root << 1 | 1, Mid + 1, r);
   PushUp(root);
 }
 
 inline matrix Query(int root, int l, int r, int L, int R) {
   if (L <= l && r <= R) return Tree[root];
   int Mid = l + r >> 1;
-  if (R <= Mid) return Query(lson, l, Mid, L, R);
-  if (Mid < L) return Query(rson, Mid + 1, r, L, R);
-  return Query(lson, l, Mid, L, R) * Query(rson, Mid + 1, r, L, R);
+  if (R <= Mid) return Query(root<<1, l, Mid, L, R);
+  if (Mid < L) return Query(root << 1 | 1, Mid + 1, r, L, R);
+  return Query(root<<1, l, Mid, L, R) * Query(root << 1 | 1, Mid + 1, r, L, R);
   // 注意查询操作的书写
 }
 
@@ -59,9 +54,9 @@ inline void Modify(int root, int l, int r, int pos) {
   }
   int Mid = l + r >> 1;
   if (pos <= Mid)
-    Modify(lson, l, Mid, pos);
+    Modify(root<<1, l, Mid, pos);
   else
-    Modify(rson, Mid + 1, r, pos);
+    Modify(root << 1 | 1, Mid + 1, r, pos);
   PushUp(root);
 }
 
@@ -133,13 +128,9 @@ inline void DFS2(int u, int t) {
 }
 
 int main() {
-#ifndef ONLINE_JUDGE
-  freopen("input.txt", "r", stdin);
-  freopen("output.txt", "w", stdout);
-#endif
-  scanf("%d%d", &n, &m);
-  REP(i, 1, n) scanf("%d", &a[i]);
-  REP(i, 1, n - 1) {
+  scanf("%d%d", &n, &m); 
+  for(int i=1;i<=n;i++) scanf("%d", &a[i]); 
+  for(int i=1;i<=n-1;i++) {
     int u, v;
     scanf("%d%d", &u, &v);
     add(u, v);
@@ -149,7 +140,7 @@ int main() {
   DFS1(1);
   DFS2(1, 1);
   Build(1, 1, n);
-  REP(i, 1, m) {
+  for(int i=1;i<=m;i++) {
     int x, val;
     scanf("%d%d", &x, &val);
     Update(x, val);
