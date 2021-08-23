@@ -67,6 +67,7 @@
         "regex": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "list": "cpp"
     }
 }
