@@ -25,7 +25,7 @@ for line in lines:
     indata = indata.replace('code', 'examples')
     outdata = outdata.replace('code', 'examples')
     ansdata = ansdata.replace('code', 'examples')
-    cmd = 'g++ '+cpp+' -o '+name
+    cmd = 'g++ '+cpp+' -o '+name+' -std=c++11'
     # 判断CE
     if os.system(cmd) == 0:
         print(cpp+' Successfully compiled')
